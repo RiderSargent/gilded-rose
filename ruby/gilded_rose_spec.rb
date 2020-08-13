@@ -368,5 +368,76 @@ describe GildedRose do
         end
       end
     end
+
+    context "Conjured" do
+      let(:items) { [ Item.new("Conjured", sell_in, quality) ] }
+      let(:quality) { 7 }
+
+      context "before sell date" do
+        let(:sell_in) { 10 }
+
+        it "reduces sell_in by 1 and quality by 2", :aggregate_failures do
+          subject
+
+          expect(items.first.sell_in).to eq(sell_in - 1)
+          expect(items.first.quality).to eq(quality - 2)
+        end
+
+        context "of zero quality" do
+          let(:quality) { 0 }
+
+          it "reduces sell_in by 1 and does not reduce quality beyond the minimum value", :aggregate_failures do
+            subject
+
+            expect(items.first.sell_in).to eq(sell_in - 1)
+            expect(items.first.quality).to eq(quality)
+          end
+        end
+      end
+
+      context "on sell date" do
+        let(:sell_in) { 0 }
+
+        it "reduces sell_in by 1 and quality by 4", :aggregate_failures do
+          subject
+
+          expect(items.first.sell_in).to eq(sell_in - 1)
+          expect(items.first.quality).to eq(quality - 4)
+        end
+
+        context "of zero quality" do
+          let(:quality) { 0 }
+
+          it "reduces sell_in by 1 and does not reduce quality beyond the minimum value", :aggregate_failures do
+            subject
+
+            expect(items.first.sell_in).to eq(sell_in - 1)
+            expect(items.first.quality).to eq(quality)
+          end
+        end
+      end
+
+      context "after sell date" do
+        let(:sell_in) { -10 }
+
+        it "reduces sell_in by 1 and quality by 4", :aggregate_failures do
+          subject
+
+          expect(items.first.sell_in).to eq(sell_in - 1)
+          expect(items.first.quality).to eq(quality - 4)
+        end
+
+        context "of zero quality" do
+          let(:quality) { 0 }
+
+          it "reduces sell_in by 1 and does not reduce quality beyond the minimum value", :aggregate_failures do
+            subject
+
+            expect(items.first.sell_in).to eq(sell_in - 1)
+            expect(items.first.quality).to eq(quality)
+          end
+        end
+      end
+    end
   end
 end
