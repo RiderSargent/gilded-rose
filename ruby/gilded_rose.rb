@@ -12,6 +12,8 @@ class GildedRose
         return update_quality_sulfuras(item)
       when "Backstage passes to a TAFKAL80ETC concert"
         return update_quality_backstage_passes(item)
+      when "Conjured"
+        return update_quality_conjured(item)
       else
         return update_quality_normal(item)
       end
@@ -48,6 +50,15 @@ class GildedRose
     item.quality += 1
     item.quality += 1 if item.sell_in < 10
     item.quality += 1 if item.sell_in < 5
+  end
+
+  def update_quality_conjured(item)
+    item.sell_in -= 1
+
+    return if item.quality <= 0
+
+    item.quality -= 2
+    item.quality -= 2 if item.sell_in <= 0
   end
 end
 
