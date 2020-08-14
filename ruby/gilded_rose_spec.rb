@@ -23,7 +23,7 @@ describe GildedRose do
   describe "#update_quality" do
     let(:items) { [ Item.new("foo", 0, 0) ] }
 
-    subject { GildedRose.new(items).update_quality() }
+    subject { GildedRose.new(items).update_quality }
 
     it "does not change the name" do
       subject
@@ -37,21 +37,23 @@ describe GildedRose do
       context "before sell date" do
         let(:sell_in) { 10 }
 
-        it "reduces sell_in by 1 and quality by 1", :aggregate_failures do
-          subject
+        it "reduces sell_in by 1" do
+          expect { subject }.to change { items.first.sell_in }.by(-1)
+        end
 
-          expect(items.first.sell_in).to eq(sell_in - 1)
-          expect(items.first.quality).to eq(quality - 1)
+        it "reduces quality by 1" do
+          expect { subject }.to change { items.first.quality }.by(-1)
         end
 
         context "of zero quality" do
           let(:quality) { 0 }
 
-          it "reduces sell_in by 1 and does not reduce quality beyond the minimum value", :aggregate_failures do
-            subject
+          it "reduces sell_in by 1" do
+            expect { subject }.to change { items.first.sell_in }.by(-1)
+          end
 
-            expect(items.first.sell_in).to eq(sell_in - 1)
-            expect(items.first.quality).to eq(quality)
+          it "does not reduce quality beyond the minimum value" do
+            expect { subject }.to_not change { items.first.quality }
           end
         end
       end
@@ -59,21 +61,23 @@ describe GildedRose do
       context "on sell date" do
         let(:sell_in) { 0 }
 
-        it "reduces sell_in by 1 and quality by 2", :aggregate_failures do
-          subject
+        it "reduces sell_in by 1" do
+          expect { subject }.to change { items.first.sell_in }.by(-1)
+        end
 
-          expect(items.first.sell_in).to eq(sell_in - 1)
-          expect(items.first.quality).to eq(quality - 2)
+        it "reduces quality by 2" do
+          expect { subject }.to change { items.first.quality }.by(-2)
         end
 
         context "of zero quality" do
           let(:quality) { 0 }
 
-          it "reduces sell_in by 1 and does not reduce quality beyond the minimum value", :aggregate_failures do
-            subject
+          it "reduces sell_in by 1" do
+            expect { subject }.to change { items.first.sell_in }.by(-1)
+          end
 
-            expect(items.first.sell_in).to eq(sell_in - 1)
-            expect(items.first.quality).to eq(quality)
+          it "does not reduce quality beyond the minimum value" do
+            expect { subject }.to_not change { items.first.quality }
           end
         end
       end
@@ -81,21 +85,23 @@ describe GildedRose do
       context "after sell date" do
         let(:sell_in) { -10 }
 
-        it "reduces sell_in by 1 and quality by 2", :aggregate_failures do
-          subject
+        it "reduces sell_in by 1" do
+          expect { subject }.to change { items.first.sell_in }.by(-1)
+        end
 
-          expect(items.first.sell_in).to eq(sell_in - 1)
-          expect(items.first.quality).to eq(quality - 2)
+        it "reduces quality by 2" do
+          expect { subject }.to change { items.first.quality }.by(-2)
         end
 
         context "of zero quality" do
           let(:quality) { 0 }
 
-          it "reduces sell_in by 1 and does not reduce quality beyond the minimum value", :aggregate_failures do
-            subject
+          it "reduces sell_in by 1" do
+            expect { subject }.to change { items.first.sell_in }.by(-1)
+          end
 
-            expect(items.first.sell_in).to eq(sell_in - 1)
-            expect(items.first.quality).to eq(quality)
+          it "does not reduce quality beyond the minimum value" do
+            expect { subject }.to_not change { items.first.quality }
           end
         end
       end
@@ -108,21 +114,23 @@ describe GildedRose do
       context "before sell date" do
         let(:sell_in) { 10 }
 
-        it "reduces sell_in by 1 and increases quality by 1", :aggregate_failures do
-          subject
+        it "reduces sell_in by 1" do
+          expect { subject }.to change { items.first.sell_in }.by(-1)
+        end
 
-          expect(items.first.sell_in).to eq(sell_in - 1)
-          expect(items.first.quality).to eq(quality + 1)
+        it "increases quality by 1" do
+          expect { subject }.to change { items.first.quality }.by(1)
         end
 
         context "at max quality" do
           let(:quality) { 50 }
 
-          it "reduces sell_in by 1 and does not increase quality beyond the maximum value", :aggregate_failures do
-            subject
+          it "reduces sell_in by 1" do
+            expect { subject }.to change { items.first.sell_in }.by(-1)
+          end
 
-            expect(items.first.sell_in).to eq(sell_in - 1)
-            expect(items.first.quality).to eq(quality)
+          it "does not increase quality beyond the maximum value" do
+            expect { subject }.to_not change { items.first.quality }
           end
         end
       end
@@ -130,32 +138,35 @@ describe GildedRose do
       context "on sell date" do
         let(:sell_in) { 0 }
 
-        it "reduces sell_in by 1 and increases quality by 2", :aggregate_failures do
-          subject
+        it "reduces sell_in by 1" do
+          expect { subject }.to change { items.first.sell_in }.by(-1)
+        end
 
-          expect(items.first.sell_in).to eq(sell_in - 1)
-          expect(items.first.quality).to eq(quality + 2)
+        it "increases quality by 2" do
+          expect { subject }.to change { items.first.quality }.by(2)
         end
 
         context "near max quality" do
           let(:quality) { 49 }
 
-          it "reduces sell_in by 1 and increases quality to the maximum value", :aggregate_failures do
-            subject
+          it "reduces sell_in by 1" do
+            expect { subject }.to change { items.first.sell_in }.by(-1)
+          end
 
-            expect(items.first.sell_in).to eq(sell_in - 1)
-            expect(items.first.quality).to eq(50)
+          it "increases quality to the maximum value"  do
+            expect { subject }.to change { items.first.quality }.to(50)
           end
         end
 
         context "at max quality" do
           let(:quality) { 50 }
 
-          it "reduces sell_in by 1 and does not increase quality beyond the maximum value", :aggregate_failures do
-            subject
+          it "reduces sell_in by 1" do
+            expect { subject }.to change { items.first.sell_in }.by(-1)
+          end
 
-            expect(items.first.sell_in).to eq(sell_in - 1)
-            expect(items.first.quality).to eq(50)
+          it "does not increase quality beyond the maximum value" do
+            expect { subject }.to_not change { items.first.quality }
           end
         end
       end
@@ -163,32 +174,35 @@ describe GildedRose do
       context "after sell date" do
         let(:sell_in) { -10 }
 
-        it "reduces sell_in by 1 and increases quality by 2", :aggregate_failures do
-          subject
+        it "reduces sell_in by 1" do
+          expect { subject }.to change { items.first.sell_in }.by(-1)
+        end
 
-          expect(items.first.sell_in).to eq(sell_in - 1)
-          expect(items.first.quality).to eq(quality + 2)
+        it "increases quality by 2" do
+          expect { subject }.to change { items.first.quality }.by(2)
         end
 
         context "near max quality" do
           let(:quality) { 49 }
 
-          it "reduces sell_in by 1 and increases quality the maximum value", :aggregate_failures do
-            subject
+          it "reduces sell_in by 1" do
+            expect { subject }.to change { items.first.sell_in }.by(-1)
+          end
 
-            expect(items.first.sell_in).to eq(sell_in - 1)
-            expect(items.first.quality).to eq(50)
+          it "increases quality to the maximum value"  do
+            expect { subject }.to change { items.first.quality }.to(50)
           end
         end
 
         context "at max quality" do
           let(:quality) { 50 }
 
-          it "reduces sell_in by 1 and does not increase quality beyond the maximum value", :aggregate_failures do
-            subject
+          it "reduces sell_in by 1" do
+            expect { subject }.to change { items.first.sell_in }.by(-1)
+          end
 
-            expect(items.first.sell_in).to eq(sell_in - 1)
-            expect(items.first.quality).to eq(50)
+          it "does not increase quality beyond the maximum value" do
+            expect { subject }.to_not change { items.first.quality }
           end
         end
       end
@@ -201,33 +215,36 @@ describe GildedRose do
       context "before sell date" do
         let(:sell_in) { 10 }
 
-        it "does not change sell_in or quality", :aggregate_failures do
-          subject
+        it "does not change sell_in" do
+          expect { subject }.to_not change { items.first.sell_in }
+        end
 
-          expect(items.first.sell_in).to eq(sell_in)
-          expect(items.first.quality).to eq(quality)
+        it "does not change quality" do
+          expect { subject }.to_not change { items.first.quality }
         end
       end
 
       context "on sell date" do
         let(:sell_in) { 0 }
 
-        it "does not change sell_in or quality", :aggregate_failures do
-          subject
+        it "does not change sell_in" do
+          expect { subject }.to_not change { items.first.sell_in }
+        end
 
-          expect(items.first.sell_in).to eq(sell_in)
-          expect(items.first.quality).to eq(quality)
+        it "does not change quality" do
+          expect { subject }.to_not change { items.first.quality }
         end
       end
 
       context "after sell date" do
         let(:sell_in) { -10 }
 
-        it "does not change sell_in or quality", :aggregate_failures do
-          subject
+        it "does not change sell_in" do
+          expect { subject }.to_not change { items.first.sell_in }
+        end
 
-          expect(items.first.sell_in).to eq(sell_in)
-          expect(items.first.quality).to eq(quality)
+        it "does not change quality" do
+          expect { subject }.to_not change { items.first.quality }
         end
       end
     end
@@ -239,21 +256,23 @@ describe GildedRose do
       context "more than ten days before sell date" do
         let(:sell_in) { 15 }
 
-        it "reduces sell_in by 1 and increases quality by 1", :aggregate_failures do
-          subject
+        it "reduces sell_in by 1" do
+          expect { subject }.to change { items.first.sell_in }.by(-1)
+        end
 
-          expect(items.first.sell_in).to eq(sell_in - 1)
-          expect(items.first.quality).to eq(quality + 1)
+        it "increases quality by 1" do
+          expect { subject }.to change { items.first.quality }.by(1)
         end
 
         context "at max quality" do
           let(:quality) { 50 }
 
-          it "reduces sell_in by 1 and does not increase quality beyond the maximum value", :aggregate_failures do
-            subject
+          it "reduces sell_in by 1" do
+            expect { subject }.to change { items.first.sell_in }.by(-1)
+          end
 
-            expect(items.first.sell_in).to eq(sell_in - 1)
-            expect(items.first.quality).to eq(quality)
+          it "does not increase quality beyond the maximum value" do
+            expect { subject }.to_not change { items.first.quality }
           end
         end
       end
@@ -261,21 +280,23 @@ describe GildedRose do
       context "ten days before sell date" do
         let(:sell_in) { 10 }
 
-        it "reduces sell_in by 1 and increases quality by 2", :aggregate_failures do
-          subject
+        it "reduces sell_in by 1" do
+          expect { subject }.to change { items.first.sell_in }.by(-1)
+        end
 
-          expect(items.first.sell_in).to eq(sell_in - 1)
-          expect(items.first.quality).to eq(quality + 2)
+        it "increases quality by 2" do
+          expect { subject }.to change { items.first.quality }.by(2)
         end
 
         context "at max quality" do
           let(:quality) { 50 }
 
-          it "reduces sell_in by 1 and does not increase quality beyond the maximum value", :aggregate_failures do
-            subject
+          it "reduces sell_in by 1" do
+            expect { subject }.to change { items.first.sell_in }.by(-1)
+          end
 
-            expect(items.first.sell_in).to eq(sell_in - 1)
-            expect(items.first.quality).to eq(quality)
+          it "does not increase quality beyond the maximum value" do
+            expect { subject }.to_not change { items.first.quality }
           end
         end
       end
@@ -283,21 +304,23 @@ describe GildedRose do
       context "six days before sell date" do
         let(:sell_in) { 6 }
 
-        it "reduces sell_in by 1 and increases quality by 2", :aggregate_failures do
-          subject
+        it "reduces sell_in by 1" do
+          expect { subject }.to change { items.first.sell_in }.by(-1)
+        end
 
-          expect(items.first.sell_in).to eq(sell_in - 1)
-          expect(items.first.quality).to eq(quality + 2)
+        it "increases quality by 2" do
+          expect { subject }.to change { items.first.quality }.by(2)
         end
 
         context "at max quality" do
           let(:quality) { 50 }
 
-          it "reduces sell_in by 1 and does not increase quality beyond the maximum value", :aggregate_failures do
-            subject
+          it "reduces sell_in by 1" do
+            expect { subject }.to change { items.first.sell_in }.by(-1)
+          end
 
-            expect(items.first.sell_in).to eq(sell_in - 1)
-            expect(items.first.quality).to eq(quality)
+          it "does not increase quality beyond the maximum value" do
+            expect { subject }.to_not change { items.first.quality }
           end
         end
       end
@@ -305,21 +328,23 @@ describe GildedRose do
       context "five days before sell date" do
         let(:sell_in) { 5 }
 
-        it "reduces sell_in by 1 and increases quality by 3", :aggregate_failures do
-          subject
+        it "reduces sell_in by 1" do
+          expect { subject }.to change { items.first.sell_in }.by(-1)
+        end
 
-          expect(items.first.sell_in).to eq(sell_in - 1)
-          expect(items.first.quality).to eq(quality + 3)
+        it "increases quality by 3" do
+          expect { subject }.to change { items.first.quality }.by(3)
         end
 
         context "at max quality" do
           let(:quality) { 50 }
 
-          it "reduces sell_in by 1 and does not increase quality beyond the maximum value", :aggregate_failures do
-            subject
+          it "reduces sell_in by 1" do
+            expect { subject }.to change { items.first.sell_in }.by(-1)
+          end
 
-            expect(items.first.sell_in).to eq(sell_in - 1)
-            expect(items.first.quality).to eq(quality)
+          it "does not increase quality beyond the maximum value" do
+            expect { subject }.to_not change { items.first.quality }
           end
         end
       end
@@ -327,21 +352,23 @@ describe GildedRose do
       context "one day before sell date" do
         let(:sell_in) { 1 }
 
-        it "reduces sell_in by 1 and increases quality by 3", :aggregate_failures do
-          subject
+        it "reduces sell_in by 1" do
+          expect { subject }.to change { items.first.sell_in }.by(-1)
+        end
 
-          expect(items.first.sell_in).to eq(sell_in - 1)
-          expect(items.first.quality).to eq(quality + 3)
+        it "increases quality by 3" do
+          expect { subject }.to change { items.first.quality }.by(3)
         end
 
         context "at max quality" do
           let(:quality) { 50 }
 
-          it "reduces sell_in by 1 and does not increase quality beyond the maximum value", :aggregate_failures do
-            subject
+          it "reduces sell_in by 1" do
+            expect { subject }.to change { items.first.sell_in }.by(-1)
+          end
 
-            expect(items.first.sell_in).to eq(sell_in - 1)
-            expect(items.first.quality).to eq(quality)
+          it "does not increase quality beyond the maximum value" do
+            expect { subject }.to_not change { items.first.quality }
           end
         end
       end
@@ -349,22 +376,24 @@ describe GildedRose do
       context "on sell date" do
         let(:sell_in) { 0 }
 
-        it "reduces sell_in by 1 and reduces quality to 0", :aggregate_failures do
-          subject
+        it "reduces sell_in by 1" do
+          expect { subject }.to change { items.first.sell_in }.by(-1)
+        end
 
-          expect(items.first.sell_in).to eq(sell_in - 1)
-          expect(items.first.quality).to eq(0)
+        it "reduces quality to 0" do
+          expect { subject }.to change { items.first.quality }.to(0)
         end
       end
 
       context "after sell date" do
         let(:sell_in) { -10 }
 
-        it "reduces sell_in by 1 and reduces quality to 0", :aggregate_failures do
-          subject
+        it "reduces sell_in by 1" do
+          expect { subject }.to change { items.first.sell_in }.by(-1)
+        end
 
-          expect(items.first.sell_in).to eq(sell_in - 1)
-          expect(items.first.quality).to eq(0)
+        it "reduces quality to 0" do
+          expect { subject }.to change { items.first.quality }.to(0)
         end
       end
     end
@@ -376,21 +405,23 @@ describe GildedRose do
       context "before sell date" do
         let(:sell_in) { 10 }
 
-        it "reduces sell_in by 1 and quality by 2", :aggregate_failures do
-          subject
+        it "reduces sell_in by 1" do
+          expect { subject }.to change { items.first.sell_in }.by(-1)
+        end
 
-          expect(items.first.sell_in).to eq(sell_in - 1)
-          expect(items.first.quality).to eq(quality - 2)
+        it "reduces quality by 2" do
+          expect { subject }.to change { items.first.quality }.by(-2)
         end
 
         context "of zero quality" do
           let(:quality) { 0 }
 
-          it "reduces sell_in by 1 and does not reduce quality beyond the minimum value", :aggregate_failures do
-            subject
+          it "reduces sell_in by 1" do
+            expect { subject }.to change { items.first.sell_in }.by(-1)
+          end
 
-            expect(items.first.sell_in).to eq(sell_in - 1)
-            expect(items.first.quality).to eq(quality)
+          it "does not reduce quality beyond the minimum value" do
+            expect { subject }.to_not change { items.first.quality }
           end
         end
       end
@@ -398,21 +429,23 @@ describe GildedRose do
       context "on sell date" do
         let(:sell_in) { 0 }
 
-        it "reduces sell_in by 1 and quality by 4", :aggregate_failures do
-          subject
+        it "reduces sell_in by 1" do
+          expect { subject }.to change { items.first.sell_in }.by(-1)
+        end
 
-          expect(items.first.sell_in).to eq(sell_in - 1)
-          expect(items.first.quality).to eq(quality - 4)
+        it "reduces quality by 4" do
+          expect { subject }.to change { items.first.quality }.by(-4)
         end
 
         context "of zero quality" do
           let(:quality) { 0 }
 
-          it "reduces sell_in by 1 and does not reduce quality beyond the minimum value", :aggregate_failures do
-            subject
+          it "reduces sell_in by 1" do
+            expect { subject }.to change { items.first.sell_in }.by(-1)
+          end
 
-            expect(items.first.sell_in).to eq(sell_in - 1)
-            expect(items.first.quality).to eq(quality)
+          it "does not reduce quality beyond the minimum value" do
+            expect { subject }.to_not change { items.first.quality }
           end
         end
       end
@@ -420,21 +453,23 @@ describe GildedRose do
       context "after sell date" do
         let(:sell_in) { -10 }
 
-        it "reduces sell_in by 1 and quality by 4", :aggregate_failures do
-          subject
+        it "reduces sell_in by 1" do
+          expect { subject }.to change { items.first.sell_in }.by(-1)
+        end
 
-          expect(items.first.sell_in).to eq(sell_in - 1)
-          expect(items.first.quality).to eq(quality - 4)
+        it "reduces quality by 4" do
+          expect { subject }.to change { items.first.quality }.by(-4)
         end
 
         context "of zero quality" do
           let(:quality) { 0 }
 
-          it "reduces sell_in by 1 and does not reduce quality beyond the minimum value", :aggregate_failures do
-            subject
+          it "reduces sell_in by 1" do
+            expect { subject }.to change { items.first.sell_in }.by(-1)
+          end
 
-            expect(items.first.sell_in).to eq(sell_in - 1)
-            expect(items.first.quality).to eq(quality)
+          it "does not reduce quality beyond the minimum value" do
+            expect { subject }.to_not change { items.first.quality }
           end
         end
       end
