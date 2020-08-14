@@ -3,26 +3,26 @@ class GildedRose
     @items = items
   end
 
-  def update_quality()
+  def update_quality
     @items.each do |item|
       case item.name
       when "Aged Brie"
-        return update_quality_brie(item)
+        return update_brie(item)
       when "Sulfuras, Hand of Ragnaros"
-        return update_quality_sulfuras(item)
+        return
       when "Backstage passes to a TAFKAL80ETC concert"
-        return update_quality_backstage_passes(item)
+        return update_backstage_passes(item)
       when "Conjured"
-        return update_quality_conjured(item)
+        return update_conjured(item)
       else
-        return update_quality_normal(item)
+        return update_normal(item)
       end
     end
   end
 
   private
 
-  def update_quality_normal(item)
+  def update_normal(item)
     item.sell_in -= 1
 
     return if item.quality <= 0
@@ -31,17 +31,14 @@ class GildedRose
     item.quality -= 1 if item.sell_in <= 0
   end
 
-  def update_quality_brie(item)
+  def update_brie(item)
     item.sell_in -= 1
 
     item.quality += 1 if item.quality < 50
     item.quality += 1 if item.sell_in <= 0 && item.quality < 50
   end
 
-  def update_quality_sulfuras(item)
-  end
-
-  def update_quality_backstage_passes(item)
+  def update_backstage_passes(item)
     item.sell_in -= 1
 
     return if item.quality >= 50
@@ -52,7 +49,7 @@ class GildedRose
     item.quality += 1 if item.sell_in < 5
   end
 
-  def update_quality_conjured(item)
+  def update_conjured(item)
     item.sell_in -= 1
 
     return if item.quality <= 0
